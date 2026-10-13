@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { ArrowLeft, ArrowRight, BookOpen, Check, ClipboardList, Droplets, Flower2, Handshake, Heart, Leaf, MapPin, Maximize, Minimize, Search, Sprout, Sun, Thermometer, Trees, Users } from 'lucide-react'
+import butterflyVideo from '../Snonit2.mp4'
 
 const pillars = [
   { title: 'חיבור בין־דורי', icon: Users, text: 'ילדים ומבוגרים מתחברים לטבע וזה לזה, ומחזקים את ההון החברתי.' },
@@ -28,7 +29,7 @@ const lifecycle = [
 ]
 
 const roadmap = [
-  { title: 'תכנון ואישורים', subtitle: 'מוצאים את המקום הנכון.', icon: MapPin, items: ['איתור ובחירת המיקום המתאים בשיתוף המועצה', 'גיבוש תוכנית פיזית ופדגוגית'] },
+  { title: 'תכנון ואישורים', subtitle: 'מוצאים את המקום הנכון.', icon: MapPin, items: ['איתור ובחירת המיקום המתאים בשיתוף המועצה', 'גיבוש תוכנית אדריכלית ופדגוגית'] },
   { title: 'משאבים ושותפים', subtitle: 'מחברים את הקהילה.', icon: Handshake, items: ['הגשת בקשות לקולות קוראים ותקציבי מועצה וקהילה', 'רתימת מוסדות חינוך, גנים ומתנדבים מקומיים'] },
   { title: 'תכנון מפורט והקמה', subtitle: 'נותנים לחזון שורשים.', icon: Sprout, items: ['בחירת צמחי פונדקאות וצוף, תשתיות השקיה ופינות ישיבה', 'הקמת הגינה בשטח, בשיתוף הקהילה'] },
   { title: 'הפעלה וקיימות', subtitle: 'מטפחים לאורך זמן.', icon: Trees, items: ['שילוב תוכניות חקר בלמידה החוץ־כיתתית', 'אירועי שיא קהילתיים והכשרת נאמני גינה'] },
@@ -44,12 +45,12 @@ const slides = [
   { kind: 'cover', chapter: 'גינת הפרפרים', theme: 'forest' },
   { kind: 'vision', chapter: 'החזון', theme: 'paper' },
   { kind: 'indicator', chapter: 'למה פרפרים', theme: 'yellow' },
-  ...evidence.map((item, detail) => ({ kind: 'evidence', chapter: 'שורשים של ידע', theme: item.theme, detail })),
+  { kind: 'foundations', chapter: 'שורשים של ידע', theme: 'paper' },
+  { kind: 'evidence', chapter: 'שורשים של ידע', theme: evidence[2].theme, detail: 2 },
   ...lifecycle.map((item, detail) => ({ kind: 'lifecycle', chapter: 'פלא בתוך עציץ', theme: 'forest', detail })),
   { kind: 'garden', chapter: 'המרחב המתוכנן', theme: 'paper' },
   { kind: 'plants', chapter: 'המרחב המתוכנן', theme: 'yellow' },
   { kind: 'roadmap', chapter: 'הדרך לשם', theme: 'paper' },
-  { kind: 'partnership', chapter: 'שותפים לדרך', theme: 'forest' },
   { kind: 'closing', chapter: 'צומחים יחד', theme: 'forest' },
 ]
 
@@ -67,7 +68,7 @@ function Flight({ celebration = false }) {
 
 function HatchingReveal({ image, title }) {
   return <div className="hatching-scene">
-    <img className="life-photo hatching-photo" src={image} alt={title} />
+    <div className="life-photo hatching-photo hatching-video-frame"><video className="hatching-video" src={butterflyVideo} poster={image} aria-label={title} autoPlay muted loop playsInline preload="auto" /></div>
     <img className="life-photo hatching-chrysalis" src={lifecycle[1].image} alt="" aria-hidden="true" />
     <div className="hatching-ring" aria-hidden="true" />
     <div className="hatching-flight" aria-hidden="true">{Array.from({ length: 7 }, (_, index) => <span className="hatching-butterfly" key={index} style={{ '--flight-x': `${-39 + index * 12}cqw`, '--flight-y': `${-27 - index % 3 * 12}cqw`, '--flight-angle': `${-30 + index * 10}deg`, '--flight-delay': `${1350 + index * 130}ms` }}><Butterfly /></span>)}</div>
@@ -81,9 +82,11 @@ function SlideContent({ slide }) {
     <div className="cover-content"><Heading eyebrow="גדרות · אקולידרס 2026" subtitle="מרחב קהילתי פתוח ליצירה, משחק והתפתחות.">גינת הפרפרים</Heading><p className="cover-statement reveal" style={{ '--delay': '240ms' }}>מקום קטן.<br /><span>חיבור גדול.</span></p><div className="cover-meta reveal" style={{ '--delay': '350ms' }}><MapPin size={17} />טבע · קהילה · התפתחות</div></div><Flight />
   </>
 
-  if (slide.kind === 'vision') return <div className="slide-body vision-body"><Heading eyebrow="החזון שלנו" subtitle="מוקד משיכה יישובי וסביבתי שמחבר בין דורות ומטפח את איכות החיים.">כשטבע ואנשים נפגשים,<br />משהו טוב צומח.</Heading><div className="vision-composition"><div className="vision-core reveal"><Butterfly /><span>גינת פרפרים<small>קהילתית</small></span></div><div className="vision-grid">{pillars.map((item, index) => { const Icon = item.icon; return <article className={`vision-pillar reveal accent-${index}`} key={item.title} style={{ '--delay': `${260 + index * 110}ms` }}><Icon /><div><h2>{item.title}</h2><p>{item.text}</p></div></article> })}</div></div></div>
+  if (slide.kind === 'vision') return <div className="slide-body vision-body"><Heading eyebrow="החזון שלנו" subtitle="מוקד משיכה יישובי וסביבתי שמחבר בין דורות ומטפח את איכות הסביבה.">כשטבע ואנשים נפגשים,<br />משהו טוב צומח.</Heading><div className="vision-composition"><div className="vision-core reveal"><Butterfly /><span>גינת פרפרים<small>קהילתית</small></span></div><div className="vision-grid">{pillars.map((item, index) => { const Icon = item.icon; return <article className={`vision-pillar reveal accent-${index}`} key={item.title} style={{ '--delay': `${260 + index * 110}ms` }}><Icon /><div><h2>{item.title}</h2><p>{item.text}</p></div></article> })}</div></div></div>
 
   if (slide.kind === 'indicator') return <div className="slide-body indicator-body"><Heading eyebrow="למה פרפרים" subtitle="סמן אקולוגי, חלון ללמידה וכלי לניטור קהילתי.">מדד טבעי לבריאות<br />הסביבה בקהילה.</Heading><div className="indicator-columns">{indicators.map((item, index) => { const Icon = item.icon; return <article className="indicator-column reveal" key={item.title} style={{ '--delay': `${240 + index * 160}ms` }}>{Icon === 'butterfly' ? <Butterfly /> : <Icon />}<h2>{item.title}</h2>{item.paragraphs.map((text, paragraph) => <p key={paragraph}>{text}</p>)}</article> })}</div></div>
+
+  if (slide.kind === 'foundations') return <div className="slide-body foundations-body"><Heading eyebrow="אקדמיה ומדע · גינון טיפולי">חזון עם שורשים של ידע.</Heading><div className="foundations-columns">{evidence.slice(0, 2).map((item, index) => { const Icon = item.icon; return <article className="foundation-column reveal" key={item.kicker} style={{ '--delay': `${180 + index * 140}ms` }}><div className="foundation-label"><Icon /><span>{item.kicker}</span></div><h2>{item.name}</h2><span className="evidence-subtitle">{item.subtitle}</span><p className="body-copy">{item.text}</p><p className="evidence-note">{item.note}</p></article> })}</div></div>
 
   if (slide.kind === 'evidence') {
     const item = evidence[slide.detail]
@@ -108,8 +111,6 @@ function SlideContent({ slide }) {
   ].map((group, index) => { const Icon = group.icon; return <div className="plant-group reveal" key={group.title} style={{ '--delay': `${230 + index * 170}ms` }}><Icon className="plant-group-icon" /><h2>{group.title}</h2><p>{group.text}</p><div className="plant-names">{group.names.map((name, plantIndex) => <span className="reveal" key={name} style={{ '--delay': `${430 + plantIndex * 100}ms` }}><Sprout size={20} />{name}</span>)}</div></div> })}</div><div className="plant-underline" aria-hidden="true" /></div>
 
   if (slide.kind === 'roadmap') return <div className="slide-body roadmap-body"><Heading eyebrow="תוכנית העבודה המוצעת" subtitle="ארבעה שלבים: מבחירת המקום ועד גינה שמטופחת לאורך זמן.">מרעיון לגינה פורחת.</Heading><ol className="roadmap-stages">{roadmap.map((stage, index) => { const Icon = stage.icon; return <li className="roadmap-stage reveal" key={stage.title} style={{ '--delay': `${240 + index * 140}ms` }}><div className="roadmap-stage-head" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span><Icon /></div><h2>{stage.title}</h2><p className="roadmap-stage-subtitle">{stage.subtitle}</p><ul>{stage.items.map(task => <li key={task}><Check /><p>{task}</p></li>)}</ul></li> })}</ol></div>
-
-  if (slide.kind === 'partnership') return <div className="slide-body partnership-body"><Heading eyebrow="בקשות מהמועצה" subtitle="בונים את המרחב הקהילתי יחד. נותנים לחזון מקום לצמוח.">גינה אחת. קהילה שלמה.</Heading><div className="partner-columns">{requests.map(({ icon: Icon, title, text }, index) => <article className="partner-column reveal" key={title} style={{ '--delay': `${240 + index * 160}ms` }}><Icon /><h2>{title}</h2><p>{text}</p></article>)}</div><div className="partnership-note reveal" style={{ '--delay': '700ms' }}>המועצה · מוסדות החינוך והגנים · מתנדבים מקומיים</div></div>
 
   return <><img className="backdrop-photo closing-photo" src="/assets/hero.webp" alt="פרפר זנב־הסנונית בגינה" /><div className="photo-shade" /><div className="closing-content"><div className="closing-mark reveal"><Butterfly /></div><Heading eyebrow="מה אנחנו מבקשים מהמועצה">בואו נצמיח יחד.</Heading><ol className="closing-asks">{requests.map(({ title, summary }, index) => <li className="reveal" key={title} style={{ '--delay': `${260 + index * 130}ms` }}><span aria-hidden="true">{index + 1}</span><div><h2>{title}</h2><p>{summary}</p></div></li>)}</ol><div className="team reveal" style={{ '--delay': '700ms' }}><span>צוות המיזם · גדרות · אקולידרס 2026</span><p>רונית אדם · איריס אלבין · אסף חסון</p></div></div><Flight celebration /></>
 }

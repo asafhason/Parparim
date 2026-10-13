@@ -26,12 +26,18 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
     await waitForSlide(page, 0)
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
     await expect(page.locator('.slide button,.slide a,input')).toHaveCount(0)
-    for (let index = 0; index < 14; index++) {
+    await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuemax', '12')
+    for (let index = 0; index < 12; index++) {
       await waitForSlide(page, index)
       await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', String(index + 1))
       const images = page.locator('.slide img')
       for (let imageIndex = 0; imageIndex < await images.count(); imageIndex++) await images.nth(imageIndex).evaluate(image => image.decode())
-      if (index === 9) {
+      if (index === 3) {
+        await expect(page.locator('.foundation-column')).toHaveCount(2)
+        await expect(page.locator('.foundation-column').nth(0)).toContainText('דובי בנימיני')
+        await expect(page.locator('.foundation-column').nth(1)).toContainText('רחלי שוורץ־צחור')
+      }
+      if (index === 8) {
         await expect(page.locator('.garden-photo img')).toHaveAttribute('src', '/assets/garden-photo.webp')
         await expect(page.locator('.garden-photo img')).toHaveCSS('object-fit', 'contain')
         await expect(page.locator('.garden-photo img')).toHaveCSS('mix-blend-mode', 'normal')
@@ -39,7 +45,8 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
       }
       await page.screenshot({ path: testInfo.outputPath(`${viewport.name}-slide-${String(index + 1).padStart(2, '0')}.png`), animations: 'disabled' })
       expect(await contentOutsideSlide(page), `slide ${index + 1} should fit without scrolling`).toEqual([])
-      if (index < 13) {
+      if (index === 11) await expect(page.locator('.slide h1')).toHaveText('בואו נצמיח יחד.')
+      if (index < 11) {
         if (index % 3 === 0) await page.locator('.presentation-stage').click({ position: { x: 20, y: 20 } })
         else if (index % 3 === 1) await page.getByRole('button', { name: 'השקף הבא', exact: true }).click()
         else await page.keyboard.press('ArrowLeft')
@@ -48,16 +55,16 @@ for (const viewport of [{ name: 'desktop', width: 1440, height: 900 }, { name: '
     await expect(page.getByRole('button', { name: 'סיום המצגת' })).toBeDisabled()
     await page.locator('.presentation-stage').click()
     await page.keyboard.press('ArrowLeft')
-    await waitForSlide(page, 13)
+    await waitForSlide(page, 11)
     await page.keyboard.press('ArrowRight')
-    await waitForSlide(page, 12)
+    await waitForSlide(page, 10)
     await page.getByRole('button', { name: 'השקף הבא', exact: true }).click()
-    await waitForSlide(page, 13)
+    await waitForSlide(page, 11)
     await page.getByRole('button', { name: 'השקף הקודם', exact: true }).click()
-    await waitForSlide(page, 12)
-    await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '13')
+    await waitForSlide(page, 10)
+    await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '11')
     await page.getByRole('button', { name: 'השקף הבא', exact: true }).click()
-    await waitForSlide(page, 13)
+    await waitForSlide(page, 11)
     expect(errors).toEqual([])
   })
 }
@@ -68,15 +75,26 @@ test('hatching reveal runs automatically, stays readable and respects reduced mo
   for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport)
     await page.goto('/')
-    for (let index = 1; index <= 7; index++) {
+    for (let index = 1; index <= 6; index++) {
       await page.locator('.presentation-stage').click({ position: { x: 20, y: 20 } })
       await waitForSlide(page, index)
     }
     await expect(page.locator('.hatching-scene')).toHaveCount(0)
     await page.getByRole('button', { name: 'השקף הבא', exact: true }).click()
-    await waitForSlide(page, 8)
+    await waitForSlide(page, 7)
     await expect(page.locator('.hatching-butterfly')).toHaveCount(7)
-    await page.locator('.hatching-photo').evaluate(image => image.decode())
+    const video = page.locator('.hatching-video')
+    await expect(video).toHaveAttribute('src', /Snonit2.*\.mp4$/)
+    await expect(video).toHaveAttribute('autoplay', '')
+    await expect(video).toHaveAttribute('loop', '')
+    await expect(video).toHaveAttribute('playsinline', '')
+    await expect(video).toHaveCSS('object-fit', 'cover')
+    await expect.poll(() => video.evaluate(media => media.readyState)).toBeGreaterThanOrEqual(2)
+    expect(await video.evaluate(media => media.muted)).toBe(true)
+    await expect.poll(() => video.evaluate(media => media.currentTime)).toBeGreaterThan(0)
+    await expect(video).toHaveCSS('transform', 'matrix(1.75, 0, 0, 1.75, 0, 0)')
+    const frame = await page.locator('.hatching-video-frame').boundingBox()
+    expect(Math.abs(frame.width - frame.height)).toBeLessThan(1)
     for (const [phase, time] of [['opening', 400], ['emerging', 1550], ['flight', 2500], ['settled', 5500]]) {
       await page.locator('.hatching-scene').evaluate(async (scene, time) => {
         scene.getAnimations({ subtree: true }).forEach(animation => { animation.pause(); animation.currentTime = time })
@@ -101,9 +119,9 @@ test('hatching reveal runs automatically, stays readable and respects reduced mo
       await page.screenshot({ path: testInfo.outputPath(`hatching-${viewport.width}-${phase}.png`) })
     }
     await page.getByRole('button', { name: 'השקף הקודם', exact: true }).click()
-    await waitForSlide(page, 7)
+    await waitForSlide(page, 6)
     await page.getByRole('button', { name: 'השקף הבא', exact: true }).click()
-    await waitForSlide(page, 8)
+    await waitForSlide(page, 7)
     expect(await page.locator('.hatching-photo').evaluate(image => image.getAnimations().some(animation => animation.playState === 'running'))).toBe(true)
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await expect(page.locator('.hatching-flight')).toBeHidden()
@@ -120,7 +138,7 @@ test('RTL progress and previous button work on desktop and small phones', async 
     const previous = page.getByRole('button', { name: 'השקף הקודם', exact: true })
     await expect(previous).toBeDisabled()
     const positions = await page.locator('.progress-track>span').evaluateAll(segments => segments.map(segment => segment.getBoundingClientRect().x))
-    expect(positions[0]).toBeGreaterThan(positions[13])
+    expect(positions[0]).toBeGreaterThan(positions[11])
     await page.locator('.presentation-stage').click({ position: { x: 20, y: 20 } })
     await waitForSlide(page, 1)
     await expect(page.locator('.progress-track>.complete')).toHaveCount(2)
@@ -219,11 +237,11 @@ test('all slides fit small phones, tablets, laptops and reduced motion', async (
   for (const viewport of [{ width: 320, height: 568 }, { width: 375, height: 667 }, { width: 768, height: 1024 }, { width: 1024, height: 700 }, { width: 1920, height: 1080 }]) {
     await page.setViewportSize(viewport)
     await page.goto('/')
-    for (let index = 0; index < 14; index++) {
+    for (let index = 0; index < 12; index++) {
       await waitForSlide(page, index)
       expect(await contentOutsideSlide(page), `${viewport.width}x${viewport.height}, slide ${index + 1}`).toEqual([])
       expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(viewport.height)
-      if (index < 13) await page.locator('.presentation-stage').click({ position: { x: 20, y: 20 } })
+      if (index < 11) await page.locator('.presentation-stage').click({ position: { x: 20, y: 20 } })
     }
   }
 })

@@ -22,7 +22,16 @@
 @keyframes line-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 .hatching-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;container-type:inline-size;isolation:isolate;pointer-events:none}
+.foundations-columns{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.foundation-column{min-width:0;padding-block:18px;border-top:1px solid var(--line)}
+.foundation-label{display:flex;align-items:center;gap:10px;color:var(--accent);font-size:15px}
+.foundation-label svg{width:24px;height:24px;flex-shrink:0}
+.foundation-column h2{font-size:30px;line-height:1.3;margin:18px 0 8px}
+@media(max-width:700px){.foundations-body{gap:20px}.foundations-columns{grid-template-columns:1fr;gap:18px}.foundation-column{padding-block:0;padding-top:12px}.foundation-label{font-size:12px;gap:8px}.foundation-label svg{width:18px;height:18px}.foundation-column h2{font-size:22px;margin:8px 0 5px}.foundation-column .body-copy{font-size:17px;line-height:1.6;margin-top:10px}.foundation-column .evidence-note{font-size:11px;margin-top:12px;padding-top:10px}}
+@media(max-width:700px) and (max-height:700px){.foundations-body{gap:14px}.foundations-body .slide-heading h1{font-size:25px}.foundations-columns{gap:12px}.foundation-column{padding-top:8px}.foundation-column h2{font-size:18px;margin:5px 0 3px}.foundation-column .evidence-subtitle{font-size:11px}.foundation-column .body-copy{font-size:14px;line-height:1.5;margin-top:7px}.foundation-column .evidence-note{display:none}}
 .hatching-scene .hatching-photo{animation:hatching-reveal 2.8s cubic-bezier(.22,1,.36,1) 250ms both}
+.hatching-video-frame{height:78%;overflow:hidden}
+.hatching-video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1.75)}
 .hatching-scene .hatching-chrysalis{position:absolute;opacity:0;z-index:2;animation:chrysalis-release 2.1s ease-in-out 250ms both}
 .hatching-ring{position:absolute;width:78%;aspect-ratio:1;border:1px solid #dce69b;border-radius:50%;opacity:0;z-index:3;animation:hatching-ripple 2.2s ease-out 950ms both}
 .hatching-flight{position:absolute;inset:0;z-index:4;color:#e7e992}
