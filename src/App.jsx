@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { ArrowLeft, ArrowRight, BookOpen, Check, Droplets, Flower2, Handshake, Heart, Leaf, MapPin, Maximize, Minimize, Search, Sprout, Sun, Trees, Users } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Check, ClipboardList, Droplets, Flower2, Handshake, Heart, Leaf, MapPin, Maximize, Minimize, Search, Sprout, Sun, Thermometer, Trees, Users } from 'lucide-react'
 
 const pillars = [
   { title: 'חיבור בין־דורי', icon: Users, text: 'ילדים ומבוגרים מתחברים לטבע וזה לזה, ומחזקים את ההון החברתי.' },
   { title: 'חוסן קהילתי', icon: Heart, text: 'שטח ציבורי קטן שמטפח איכות חיים, בריאות נפשית ופיזית.' },
   { title: 'משחק חופשי בטבע', icon: Sun, text: 'תנועה, יצירה וחקירה במרחב פתוח, נגיש ומזמין.' },
   { title: 'חינוך סביבתי', icon: Sprout, text: 'למידה מתוך עשייה, שתילה ומעקב אחר מחזור החיים.' },
+]
+
+const indicators = [
+  { title: 'למה פרפרים?', icon: Thermometer, paragraphs: [<>הפרפרים הם <strong>המדחום של הטבע</strong> וסמן אקולוגי לבריאות הסביבה.</>] },
+  { title: 'תרומת הידע להבנת הטבע', icon: 'butterfly', paragraphs: [<>גינת פרפרים משמשת <strong>מקום מפגש</strong> לפרפרי הסביבה ו<strong>חלון ראווה</strong> להיכרות איתם.</>] },
+  { title: 'השתתפות הציבור בניטור וספירת פרפרים', icon: ClipboardList, paragraphs: [<>הניטור הוא <strong>כלי מדעי</strong> למדידת איכות הסביבה באמצעות הפרפרים.</>, <>ממנו לומדים <strong>התושבים והרשויות</strong> על תוצאות השקעתם בשמירת הטבע בקהילה.</>] },
 ]
 
 const evidence = [
@@ -37,6 +43,7 @@ const requests = [
 const slides = [
   { kind: 'cover', chapter: 'גינת הפרפרים', theme: 'forest' },
   { kind: 'vision', chapter: 'החזון', theme: 'paper' },
+  { kind: 'indicator', chapter: 'למה פרפרים', theme: 'yellow' },
   ...evidence.map((item, detail) => ({ kind: 'evidence', chapter: 'שורשים של ידע', theme: item.theme, detail })),
   ...lifecycle.map((item, detail) => ({ kind: 'lifecycle', chapter: 'פלא בתוך עציץ', theme: 'forest', detail })),
   { kind: 'garden', chapter: 'המרחב המתוכנן', theme: 'paper' },
@@ -75,6 +82,8 @@ function SlideContent({ slide }) {
   </>
 
   if (slide.kind === 'vision') return <div className="slide-body vision-body"><Heading eyebrow="החזון שלנו" subtitle="מוקד משיכה יישובי וסביבתי שמחבר בין דורות ומטפח את איכות החיים.">כשטבע ואנשים נפגשים,<br />משהו טוב צומח.</Heading><div className="vision-composition"><div className="vision-core reveal"><Butterfly /><span>גינת פרפרים<small>קהילתית</small></span></div><div className="vision-grid">{pillars.map((item, index) => { const Icon = item.icon; return <article className={`vision-pillar reveal accent-${index}`} key={item.title} style={{ '--delay': `${260 + index * 110}ms` }}><Icon /><div><h2>{item.title}</h2><p>{item.text}</p></div></article> })}</div></div></div>
+
+  if (slide.kind === 'indicator') return <div className="slide-body indicator-body"><Heading eyebrow="למה פרפרים" subtitle="סמן אקולוגי, חלון ללמידה וכלי לניטור קהילתי.">מדד טבעי לבריאות<br />הסביבה בקהילה.</Heading><div className="indicator-columns">{indicators.map((item, index) => { const Icon = item.icon; return <article className="indicator-column reveal" key={item.title} style={{ '--delay': `${240 + index * 160}ms` }}>{Icon === 'butterfly' ? <Butterfly /> : <Icon />}<h2>{item.title}</h2>{item.paragraphs.map((text, paragraph) => <p key={paragraph}>{text}</p>)}</article> })}</div></div>
 
   if (slide.kind === 'evidence') {
     const item = evidence[slide.detail]
